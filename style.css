@@ -1,0 +1,2245 @@
+/* Reset & Variables */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg-dark: #0a0c16;
+    --sidebar-bg: rgba(15, 18, 36, 0.85);
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+    --text-main: #f0f2f5;
+    --text-muted: #8e9bb0;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --danger-color: #ef4444;
+    
+    /* TV Broadcast Colors */
+    --nhk-blue: #004098;
+    --nhk-gold: #cfa93c;
+    --tv-font: 'Noto Sans JP', sans-serif;
+    --digital-font: 'Outfit', sans-serif;
+}
+
+body {
+    font-family: var(--tv-font);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* App Container Layout */
+#app-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Sidebar Dashboard (Control Panel) */
+#sidebar {
+    width: 380px;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-header h1 {
+    font-size: 1.25rem;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 30%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sidebar-header .subtitle {
+    font-family: var(--digital-font);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Presets */
+.preset-section {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--sidebar-border);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.section-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+select, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(8, 10, 24, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+select:focus, input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+/* Tabs */
+.tab-navigation {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 1px solid var(--sidebar-border);
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn {
+    padding: 12px 5px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.tab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+/* Tab Content */
+.tab-content-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.control-group {
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.control-group h3 {
+    font-size: 0.85rem;
+    color: #fff;
+    margin-bottom: 12px;
+    border-left: 3px solid var(--accent-color);
+    padding-left: 8px;
+    font-weight: 700;
+}
+
+.control-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+/* Switch & Checkbox styling */
+.checkbox-container {
+    display: flex !important;
+    align-items: center;
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    font-size: 0.8rem !important;
+    user-select: none;
+    margin-top: 12px !important;
+    color: var(--text-main) !important;
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Toggle Switch */
+.switch-container {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 0.85rem !important;
+    color: #fff !important;
+    margin-top: 0 !important;
+}
+
+.switch-container input {
+    display: none;
+}
+
+.switch-slider {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+.switch-container input:checked + .switch-slider {
+    background-color: var(--accent-color);
+}
+
+.switch-container input:checked + .switch-slider:before {
+    transform: translateX(20px);
+}
+
+/* Seats Editor List */
+.seats-editor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 12px;
+}
+
+.seat-row-edit {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.15);
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.seat-row-edit .color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.seat-row-edit .party-label-edit {
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+.seat-row-edit input[type="number"] {
+    padding: 4px 6px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.seat-total-summary {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+}
+
+.seat-total-summary strong {
+    color: #60a5fa;
+    font-size: 0.95rem;
+}
+
+/* Secondary Button */
+.secondary-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Help text */
+.help-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+/* Sidebar Footer Buttons */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--sidebar-border);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-color) 0%, #1d4ed8 100%);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    transition: all 0.2s;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+}
+
+.sidebar-footer .hint {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 8px;
+}
+
+
+/* ==========================================================================
+   MAIN PREVIEW AREA (TV Screen container)
+   ========================================================================== */
+#preview-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: radial-gradient(circle at center, #111827 0%, #030712 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+#tv-monitor-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 
+                0 0 100px rgba(0, 64, 152, 0.15);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+    border: 8px solid #1f2937;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#tv-monitor {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Studio Background styles */
+#tv-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Studio Themes */
+.bg-studio-dark {
+    background: radial-gradient(circle at 80% 20%, #1e3a8a 0%, #030712 70%);
+}
+
+.bg-studio-cyber {
+    background: radial-gradient(circle at 50% 50%, #4c1d95 0%, #030712 80%);
+}
+
+.bg-studio-gold {
+    background: radial-gradient(circle at 80% 30%, #78350f 0%, #030712 80%);
+}
+
+.bg-studio-simple {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+}
+
+/* Grid Overlay & Animations */
+.bg-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    perspective: 500px;
+    transform: rotateX(20deg);
+    transform-origin: bottom;
+    opacity: 0.8;
+}
+
+/* Active Cyber Grid styling */
+.bg-studio-cyber .bg-grid-overlay {
+    background-image: 
+        linear-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+.bg-ambient-light {
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 70%;
+    height: 80%;
+    background: radial-gradient(ellipse at center, rgba(59, 130, 246, 0.25) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+}
+
+/* Animations for background */
+.ambient-animated .bg-ambient-light {
+    animation: pulseAmbient 8s ease-in-out infinite alternate;
+}
+
+@keyframes pulseAmbient {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate(-10%, 15%) scale(1.2);
+        opacity: 0.95;
+        background-color: rgba(99, 102, 241, 0.35);
+    }
+}
+
+.bg-studio-gold .bg-ambient-light {
+    background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+}
+
+.ambient-animated.bg-studio-cyber .bg-grid-overlay {
+    animation: gridScroll 20s linear infinite;
+}
+
+@keyframes gridScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 300px; }
+}
+
+/* TV Scanlines Effect */
+.scanline-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.15) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.scanline-overlay::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    z-index: 11;
+    background-size: 100% 3px, 3px 100%;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   TV SCREEN GRAPHICS (THE OVERLAYS)
+   ========================================================================== */
+#tv-screen-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 2.5% 0 0;
+    gap: 0;
+}
+
+/* 1. UPPER TICKER BAR */
+#tv-header-ticker {
+    display: flex;
+    height: 9%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+    align-items: center;
+    backdrop-filter: blur(8px);
+    margin: 0 3.5%;
+    width: calc(100% - 7%);
+}
+
+/* TV Clock Display */
+.tv-clock-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 14px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+}
+.tv-clock-time {
+    font-family: var(--digital-font);
+    font-size: 1.3vw;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+.tv-clock-date {
+    font-family: var(--digital-font);
+    font-size: 0.62vw;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* Seat Bar Graph (between candidate bulletin and seats tally) */
+#tv-seat-bar-graph {
+    width: 100%;
+    height: 18px;
+    flex-shrink: 0;
+    position: relative;
+    background: rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+#tv-seat-bar-track {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+}
+.seat-bar-seg {
+    height: 100%;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-width: 0;
+}
+.seat-bar-label {
+    font-size: 0.55vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.95);
+    text-align: center;
+    line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    pointer-events: none;
+}
+.seat-bar-label b {
+    font-size: 0.7vw;
+    font-family: var(--digital-font);
+    display: block;
+}
+.seat-bar-empty {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7vw;
+    color: rgba(255, 255, 255, 0.3);
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+#tv-seat-bar-majority-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    display: none;
+    z-index: 5;
+}
+#tv-seat-bar-majority-line::before {
+    content: '½';
+    position: absolute;
+    top: -1px;
+    left: 3px;
+    font-size: 0.55vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.8);
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.ticker-badge {
+    height: 100%;
+    padding: 0 16px;
+    background: #c21e1e; /* Red tag */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 900;
+    font-size: 1.1vw;
+    border-right: 3px solid #fff;
+    position: relative;
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+    padding-right: 25px;
+}
+
+.ticker-badge::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 100%;
+    background: #fff;
+    transform: skewX(-12deg);
+}
+
+.badge-year {
+    font-family: var(--digital-font);
+    font-size: 0.8vw;
+    opacity: 0.8;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+}
+
+.ticker-text-area {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding-left: 15px;
+}
+
+.ticker-scroller {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+
+.ticker-line-1 {
+    font-size: 1.35vw;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    white-space: nowrap;
+}
+
+.ticker-line-2 {
+    font-size: 0.95vw;
+    font-weight: 700;
+    color: #ffd000;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+
+/* 2. CENTRAL GRAPHICS BOARD (TRAPEZOIDS) */
+/* NOTE: #tv-main-board styles are defined in the DISPLAY BOARD SYSTEM section below */
+
+.board-card {
+    position: relative;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+    
+    /* Beautiful angle cut exactly like in election TV graphics */
+    transform: skewX(-8deg);
+    margin-left: 20px;
+}
+
+/* Reset skew inside so text looks normal */
+.board-card > * {
+    transform: skewX(8deg);
+}
+
+.board-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Particle effect lines */
+.card-glow-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    opacity: 0.7;
+    animation: flowLight 4s infinite linear;
+}
+
+@keyframes flowLight {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Party Left Tag Styling */
+.card-party-tag {
+    width: 18%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2.1vw;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    box-shadow: 5px 0 15px rgba(0,0,0,0.3);
+    z-index: 2;
+    position: relative;
+}
+
+/* Card main message */
+.card-message {
+    flex: 1;
+    padding-left: 25px;
+    z-index: 2;
+}
+
+.card-message h2 {
+    font-size: 2.6vw;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Right candidate avatar frame */
+.card-avatar-wrapper {
+    width: 25%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 1;
+}
+
+.avatar-container {
+    width: 90%;
+    height: 110%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.avatar-container svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Party Themes (Colors & Backgrounds) */
+/* 1. 立民 Style (Neon Blue & Dark) */
+.party-ritumin {
+    background: linear-gradient(135deg, rgba(0, 64, 152, 0.9) 0%, rgba(5, 17, 36, 0.95) 100%);
+    border-left: 8px solid #005CAF;
+}
+.party-ritumin .card-party-tag {
+    background: #005CAF;
+}
+.party-ritumin .card-message h2 {
+    color: #ffffff;
+}
+/* Yellow highlight word like in image "議席増の勢い" */
+.party-ritumin .card-message h2 {
+    background: linear-gradient(to bottom, #fff 40%, #fef08a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.party-ritumin .card-glow-line {
+    background: linear-gradient(90deg, transparent, #00d2ff, transparent);
+}
+
+/* 2. 維新 Style (Gold Yellow & Olive Green-Yellow) */
+.party-ishin {
+    background: linear-gradient(135deg, rgba(82, 73, 22, 0.95) 0%, rgba(17, 18, 9, 0.98) 100%);
+    border-left: 8px solid #cfa93c;
+}
+.party-ishin .card-party-tag {
+    background: linear-gradient(135deg, #cfa93c 0%, #a18023 100%);
+    color: #ffffff;
+}
+.party-ishin .card-message h2 {
+    background: linear-gradient(to bottom, #ffffff 40%, #ffeb3b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.party-ishin .card-glow-line {
+    background: linear-gradient(90deg, transparent, #ffd000, transparent);
+}
+
+/* 3. 自民 Style (Bold Crimson & White) */
+.party-jimin {
+    background: linear-gradient(135deg, rgba(163, 19, 19, 0.9) 0%, rgba(36, 5, 5, 0.95) 100%);
+    border-left: 8px solid #e11d48;
+}
+.party-jimin .card-party-tag {
+    background: #e11d48;
+}
+.party-jimin .card-message h2 {
+    color: #ffffff;
+}
+.party-jimin .card-glow-line {
+    background: linear-gradient(90deg, transparent, #f43f5e, transparent);
+}
+
+/* 4. 公明 Style (Pink-Orange/Magenta) */
+.party-komei {
+    background: linear-gradient(135deg, rgba(178, 20, 99, 0.9) 0%, rgba(38, 5, 22, 0.95) 100%);
+    border-left: 8px solid #db2777;
+}
+.party-komei .card-party-tag {
+    background: #db2777;
+}
+.party-komei .card-message h2 {
+    color: #fff;
+    background: linear-gradient(to bottom, #fff 50%, #f472b6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.party-komei .card-glow-line {
+    background: linear-gradient(90deg, transparent, #f472b6, transparent);
+}
+
+/* 5. 共産 Style (Purple-Red) */
+.party-kyosan {
+    background: linear-gradient(135deg, rgba(109, 40, 217, 0.9) 0%, rgba(29, 6, 64, 0.95) 100%);
+    border-left: 8px solid #7c3aed;
+}
+.party-kyosan .card-party-tag {
+    background: #7c3aed;
+}
+.party-kyosan .card-message h2 {
+    color: #fff;
+}
+.party-kyosan .card-glow-line {
+    background: linear-gradient(90deg, transparent, #a78bfa, transparent);
+}
+
+
+/* ==========================================================================
+   3. BOTTOM BROADCAST BAR (SEATS TALLY FULL WIDTH)
+   ========================================================================== */
+/* Overall bottom section = seats tally strip + candidate overlay above it */
+#tv-bottom-bar {
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Candidate 当確速報 – sits inline above bar graph */
+#tv-candidate-bulletin {
+    width: 100%;
+    height: 44px;
+    background: #ffffff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    padding-left: 12px;
+    clip-path: polygon(0 0, 97% 0, 100% 100%, 0% 100%);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+    z-index: 10;
+    border-top: 3px solid #d32f2f;
+    flex-shrink: 0;
+
+    /* Slide-in animation */
+    transform: translateY(100%);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.35s ease;
+    order: -1;
+}
+
+#tv-candidate-bulletin.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Seats tally strip */
+#tv-seats-tally {
+    width: 100%;
+    height: 56px;
+    background: rgba(0, 0, 0, 0.92);
+    border-top: 2px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+    display: flex;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+/* Caster box lives right inside the seats strip on the far right */
+#tv-caster-box {
+    width: 70px;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    border-left: 1px solid rgba(255,255,255,0.1);
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: visible;
+    position: relative;
+    z-index: 5;
+}
+
+/* Caster avatar container pops UP above the strip */
+.caster-avatar-container {
+    width: 100%;
+    height: 300%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.caster-avatar-container svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Seats header label (左端の「獲得議席」) */
+.seats-header {
+    width: 52px;
+    flex-shrink: 0;
+    background: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.seats-header span {
+    font-size: 0.6vw;
+    font-weight: 900;
+    color: #d4d4d8;
+    letter-spacing: 0.5px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    white-space: nowrap;
+}
+
+/* Scrollable track area */
+.seats-scroll-container {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    align-items: stretch;
+    scrollbar-width: none;
+    min-width: 0;
+}
+
+.seats-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.seats-track {
+    display: flex;
+    height: 100%;
+    min-width: 100%;
+}
+
+/* Individual party block */
+.party-seat-block {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 42px;
+    height: 100%;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    position: relative;
+    transition: background 0.2s;
+    overflow: hidden;
+}
+
+.party-seat-block:hover {
+    background: rgba(255,255,255,0.06);
+}
+
+.party-seat-block.has-seats {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.block-party-name {
+    font-size: 0.6vw;
+    font-weight: 900;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.35);
+    height: 38%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.3px;
+}
+
+.block-seats-count {
+    font-family: var(--digital-font);
+    font-size: 1.1vw;
+    font-weight: 800;
+    color: #fff;
+    height: 62%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.5px;
+}
+
+/* Party colors inside tally track */
+.party-seat-block[data-party="自民"] .block-party-name { background-color: #A31313; }
+.party-seat-block[data-party="立民"] .block-party-name { background-color: #005CAF; }
+.party-seat-block[data-party="公明"] .block-party-name { background-color: #db2777; }
+.party-seat-block[data-party="共産"] .block-party-name { background-color: #8b5cf6; }
+.party-seat-block[data-party="維新"] .block-party-name { background-color: #b45309; }
+.party-seat-block[data-party="国民"] .block-party-name { background-color: #0d9488; }
+.party-seat-block[data-party="れ新"] .block-party-name { background-color: #d946ef; }
+.party-seat-block[data-party="社民"] .block-party-name { background-color: #e11d48; }
+.party-seat-block[data-party="N党"] .block-party-name { background-color: #84cc16; }
+.party-seat-block[data-party="参政"] .block-party-name { background-color: #ea580c; }
+.party-seat-block[data-party="保守"] .block-party-name { background-color: #0ea5e9; }
+.party-seat-block[data-party="無・他"] .block-party-name { background-color: #4b5563; }
+.party-seat-block[data-party="残"] .block-party-name { background-color: #374151; }
+
+/* Badge確 styling */
+.bulletin-badge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.bulletin-badge {
+    width: 30px;
+    height: 30px;
+    background: #d32f2f;
+    border-radius: 50%;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1vw;
+    font-weight: 950;
+    box-shadow: 0 0 8px rgba(211, 47, 47, 0.7);
+    border: 2px solid #fff;
+    animation: badgePulse 2s infinite;
+    flex-shrink: 0;
+}
+
+@keyframes badgePulse {
+    0% { transform: scale(1); box-shadow: 0 0 4px rgba(211, 47, 47, 0.4); }
+    50% { transform: scale(1.1); box-shadow: 0 0 14px rgba(211, 47, 47, 0.9); }
+    100% { transform: scale(1); box-shadow: 0 0 4px rgba(211, 47, 47, 0.4); }
+}
+
+.bulletin-wins {
+    font-size: 0.55vw;
+    font-weight: 800;
+    color: #d32f2f;
+    margin-top: 1px;
+    white-space: nowrap;
+}
+
+/* Candidate main texts */
+.bulletin-main-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    gap: 1px;
+}
+
+.candidate-meta {
+    display: flex;
+    gap: 6px;
+    font-size: 0.65vw;
+    font-weight: 800;
+    color: #4b5563;
+    line-height: 1;
+}
+
+.candidate-meta .district {
+    background: #e5e7eb;
+    padding: 1px 5px;
+    border-radius: 2px;
+}
+
+.candidate-meta .title {
+    color: #374151;
+    padding: 1px 0;
+}
+
+.candidate-identity {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.candidate-identity .name {
+    font-size: 1.5vw;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.candidate-identity .age-party {
+    font-size: 0.8vw;
+    font-weight: 800;
+    color: #4b5563;
+}
+
+.candidate-identity .party-label {
+    background: #A31313;
+    color: #fff;
+    padding: 1px 4px;
+    font-size: 0.65vw;
+    font-weight: 900;
+    border-radius: 2px;
+    margin-left: 2px;
+}
+
+/* Responsive Scaling details */
+@media (max-width: 1200px) {
+    #sidebar {
+        width: 330px;
+    }
+}
+
+/* Fullscreen Mode Overrides */
+body.fullscreen #sidebar {
+    display: none;
+}
+
+body.fullscreen #preview-area {
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+}
+
+body.fullscreen #tv-monitor-wrapper {
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
+    border: none;
+    border-radius: 0;
+}
+
+body.fullscreen #tv-monitor {
+    padding-top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Floating Exit Button */
+.floating-exit-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    backdrop-filter: blur(5px);
+    z-index: 999;
+    display: none;
+    transition: all 0.2s;
+}
+
+.floating-exit-btn:hover {
+    background: rgba(239, 68, 68, 0.8);
+    border-color: rgba(239, 68, 68, 1);
+    transform: scale(1.05);
+}
+
+body.fullscreen .floating-exit-btn {
+    display: block;
+}
+
+/* ==========================================================================
+   SIMULATION PANEL STYLES
+   ========================================================================== */
+
+#sim-panel {
+    padding: 14px 20px;
+    border-top: 1px solid rgba(239, 68, 68, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%);
+    flex-shrink: 0;
+}
+
+#sim-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.sim-live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #4b5563;
+    transition: background 0.3s;
+    flex-shrink: 0;
+}
+
+.sim-live-dot.live {
+    background: #ef4444;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.7);
+    animation: livePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.75); }
+}
+
+.sim-panel-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #f0f2f5;
+    letter-spacing: 0.3px;
+    flex: 1;
+}
+
+#sim-status-text {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.sim-scenario-row {
+    margin-bottom: 10px;
+}
+
+/* Speed Slider */
+.sim-speed-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.sim-speed-row label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    outline: none;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+    transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.5);
+}
+
+.sim-speed-label {
+    font-size: 0.68rem;
+    color: #f97316;
+    font-weight: 800;
+    min-width: 55px;
+    text-align: right;
+}
+
+/* Button Row */
+.sim-btn-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.sim-start-btn-el {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: none;
+    color: #fff;
+    border-radius: 7px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+    font-family: inherit;
+}
+
+.sim-start-btn-el:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(239, 68, 68, 0.45);
+}
+
+.sim-pause-btn {
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+    color: #fff;
+    border-radius: 7px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+    font-family: inherit;
+}
+
+.sim-pause-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.45);
+}
+
+.sim-reset-btn-el {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #a1a1aa;
+    border-radius: 7px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.sim-reset-btn-el:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+/* Progress Bar */
+.sim-progress-container {
+    margin-bottom: 8px;
+}
+
+.sim-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.sim-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.sim-progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ef4444, #f97316, #eab308);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+    position: relative;
+}
+
+.sim-progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
+    border-radius: 0 3px 3px 0;
+    animation: progressShine 1.5s infinite;
+}
+
+@keyframes progressShine {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Majority Info line */
+#sim-majority-line {
+    text-align: center;
+}
+
+.majority-info {
+    font-size: 0.68rem;
+    color: #f97316;
+    font-weight: 700;
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   SEAT BLOCK FLASH ANIMATION (当確確定時の光るエフェクト)
+   ========================================================================== */
+@keyframes seatFlash {
+    0%   { background-color: transparent; transform: scaleY(1); }
+    25%  { background-color: rgba(251, 191, 36, 0.45); transform: scaleY(1.08); }
+    75%  { background-color: rgba(251, 191, 36, 0.15); }
+    100% { background-color: transparent; transform: scaleY(1); }
+}
+
+.party-seat-block.seat-flash {
+    animation: seatFlash 0.65s ease-out;
+}
+
+/* Milestone flash on the whole bottom bar */
+@keyframes milestoneGlow {
+    0%   { box-shadow: inset 0 0 0 rgba(251, 191, 36, 0); }
+    30%  { box-shadow: inset 0 0 40px rgba(251, 191, 36, 0.4); }
+    100% { box-shadow: inset 0 0 0 rgba(251, 191, 36, 0); }
+}
+
+#tv-bottom-bar.milestone-flash {
+    animation: milestoneGlow 1.2s ease-out;
+}
+
+/* Special "速報" badge that appears on main board during simulation */
+.sim-breaking-badge {
+    position: absolute;
+    top: -8px;
+    left: 40px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.55vw;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    animation: breakingPulse 0.8s infinite;
+    z-index: 10;
+}
+
+@keyframes breakingPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Sidebar scroll adjustments for sim panel */
+#sidebar {
+    overflow: hidden;
+}
+
+.tab-content-container {
+    min-height: 0;
+}
+
+/* ==========================================================================
+   ADDITIONAL BACKGROUND STYLES
+   ========================================================================== */
+.bg-studio-election-red {
+    background: radial-gradient(circle at 50% 50%, #7f1d1d 0%, #0f0505 85%);
+}
+.bg-studio-election-red .bg-grid-overlay {
+    background-image: 
+        linear-gradient(rgba(239, 68, 68, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(239, 68, 68, 0.08) 1px, transparent 1px);
+    background-size: 25px 25px;
+}
+.ambient-animated.bg-studio-election-red .bg-grid-overlay {
+    animation: gridScrollRed 12s linear infinite;
+}
+@keyframes gridScrollRed {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 -250px; }
+}
+
+.bg-studio-glass-space {
+    background: radial-gradient(circle at 20% 30%, #1e1b4b 0%, #030712 90%);
+}
+.bg-studio-glass-space::after {
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 20%;
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
+    filter: blur(50px);
+    pointer-events: none;
+    z-index: 2;
+    animation: floatCircle 15s infinite alternate ease-in-out;
+}
+@keyframes floatCircle {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(150px, 80px) scale(1.3); }
+}
+
+/* ==========================================================================
+   DISPLAY BOARD SYSTEM (CENTER AREA)
+   ========================================================================== */
+#tv-center-area {
+    position: relative;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    padding: 10px 3%;
+    display: flex;
+    align-items: stretch;
+}
+
+.center-board-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px) scale(0.98);
+    transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1;
+}
+
+/* Main news board uses full width */
+#tv-main-board.active {
+    width: 100%;
+}
+
+.center-board-panel.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+    z-index: 5;
+}
+
+/* Adapt standard news board to center area wrapper */
+#tv-main-board {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    height: 100%;
+    perspective: 800px;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.board-title {
+    background: rgba(0, 0, 0, 0.85);
+    border-left: 5px solid var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left-width: 5px;
+}
+.board-title .title-jp {
+    font-size: 1.1vw;
+    font-weight: 900;
+    color: #fff;
+}
+.board-title .title-en {
+    font-size: 0.65vw;
+    color: var(--text-muted);
+    font-family: var(--digital-font);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+/* Proportional Board Styles */
+#tv-proportional-board {
+    display: flex;
+    flex-direction: column;
+}
+
+.proportional-container {
+    background: rgba(10, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    scrollbar-width: none;
+}
+.proportional-container::-webkit-scrollbar {
+    display: none;
+}
+
+.prop-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 24px;
+}
+
+.prop-party-name {
+    width: 60px;
+    font-size: 0.85vw;
+    font-weight: 900;
+    color: #fff;
+    text-align: right;
+}
+
+.prop-bar-outer {
+    flex: 1;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.prop-bar-inner {
+    height: 100%;
+    background: var(--accent-color);
+    border-radius: 2px 0 0 2px;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.prop-bar-inner::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+}
+
+.prop-seats-box {
+    width: 80px;
+    font-size: 1.1vw;
+    font-weight: 900;
+    color: #fff;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.prop-seats-box .unit {
+    font-size: 0.65vw;
+    color: var(--text-muted);
+}
+
+/* Featured District Board Styles */
+#tv-featured-district-board {
+    display: flex;
+    flex-direction: column;
+}
+
+.featured-district-content {
+    background: rgba(10, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+}
+
+.district-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+.district-badge {
+    background: #e11d48;
+    color: #fff;
+    padding: 4px 12px;
+    font-size: 1vw;
+    font-weight: 900;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(225, 29, 72, 0.3);
+}
+
+.district-status {
+    color: #ffd000;
+    font-size: 1.2vw;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(255, 208, 0, 0.4);
+}
+
+.blink {
+    animation: statusBlink 1.2s infinite;
+}
+@keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.battle-arena {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex: 1;
+    min-height: 0;
+}
+
+.candidate-vs-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 22%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 12px 8px;
+    gap: 6px;
+}
+
+.vs-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1f2937;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+.vs-avatar svg {
+    width: 110%;
+    height: 110%;
+    object-fit: contain;
+}
+
+.vs-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 4px;
+}
+
+.vs-party-badge {
+    font-size: 0.65vw;
+    font-weight: 900;
+    color: #fff;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-bottom: 4px;
+    text-align: center;
+    width: 100%;
+}
+
+.vs-name {
+    font-size: 1.0vw;
+    font-weight: 900;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* VS Gauge */
+.vs-gauge-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 10px;
+}
+
+.vs-mid-text {
+    font-family: var(--digital-font);
+    font-size: 1.2vw;
+    font-weight: 800;
+    color: var(--text-muted);
+    font-style: italic;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.vs-bar-wrap {
+    width: 100%;
+    height: 10px;
+    background: #005CAF; /* Fallback right side color */
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vs-bar-fill-l {
+    height: 100%;
+    background: #A31313; /* Fallback left side color */
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vs-bar-labels {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--digital-font);
+    font-size: 1.1vw;
+    font-weight: 800;
+    color: #fff;
+    margin-top: 4px;
+}
+
+.vs-votes-row {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8vw;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Party backgrounds */
+.party-bg-jimin   { background-color: #A31313 !important; }
+.party-bg-ritumin { background-color: #005CAF !important; }
+.party-bg-komei   { background-color: #db2777 !important; }
+.party-bg-kyosan  { background-color: #8b5cf6 !important; }
+.party-bg-ishin   { background-color: #b45309 !important; }
+.party-bg-kokumin { background-color: #0d9488 !important; }
+.party-bg-rewa    { background-color: #d946ef !important; }
+.party-bg-shamin  { background-color: #e11d48 !important; }
+.party-bg-sansei  { background-color: #ea580c !important; }
+.party-bg-hoshu   { background-color: #0ea5e9 !important; }
+.party-bg-other   { background-color: #4b5563 !important; }
+
+/* ==========================================================================
+   SHARE BOARD STYLES (DONUT CHART)
+   ========================================================================== */
+.share-board-content {
+    background: rgba(10, 15, 30, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 15px 25px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    min-height: 0;
+}
+
+.donut-chart-wrapper {
+    width: 175px;
+    height: 175px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#tv-donut-chart {
+    width: 100%;
+    height: 100%;
+}
+
+.donut-segment {
+    transition: stroke-dasharray 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.donut-center-title {
+    font-size: 11px;
+    font-weight: 700;
+    fill: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.donut-center-number {
+    font-family: var(--digital-font);
+    font-size: 28px;
+    font-weight: 800;
+    fill: #fff;
+}
+
+.donut-center-total {
+    font-family: var(--digital-font);
+    font-size: 12px;
+    font-weight: 600;
+    fill: var(--text-muted);
+}
+
+.share-legend {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
+    max-height: 170px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding-right: 4px;
+}
+
+.share-legend::-webkit-scrollbar {
+    display: none;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8vw;
+}
+
+.legend-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-name {
+    font-weight: 700;
+    color: #fff;
+}
+
+.legend-right {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--digital-font);
+}
+
+.legend-seats {
+    font-weight: 800;
+    color: #fff;
+}
+
+.legend-pct {
+    font-size: 0.65vw;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   ELECTION COMPLETE OVERLAY
+   ========================================================================== */
+.complete-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.92) 80%);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(4px);
+}
+
+.complete-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.complete-banner {
+    width: 80%;
+    max-width: 600px;
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(3, 7, 18, 0.98) 100%);
+    border: 2px solid #db2777; /* Pink-magenta primary border */
+    border-color: linear-gradient(90deg, #db2777, #3b82f6);
+    box-shadow: 0 25px 60px rgba(0,0,0,0.8),
+                0 0 40px rgba(219, 39, 119, 0.2);
+    border-radius: 8px;
+    padding: 30px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.complete-overlay.show .complete-banner {
+    transform: scale(1);
+    border-image: linear-gradient(to right, #db2777, #3b82f6) 1;
+}
+
+.complete-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: skewX(-20deg);
+    animation: completeShine 6s infinite linear;
+}
+
+@keyframes completeShine {
+    0% { left: -100%; }
+    30%, 100% { left: 150%; }
+}
+
+.complete-badge {
+    background: #d32f2f;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px rgba(211, 47, 47, 0.6);
+    text-transform: uppercase;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.complete-title {
+    font-size: 2.2vw;
+    font-weight: 950;
+    letter-spacing: 1px;
+    background: linear-gradient(to bottom, #ffffff 40%, #fbcfe8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.complete-subtitle {
+    font-size: 1.1vw;
+    font-weight: 700;
+    color: #ffd000;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+

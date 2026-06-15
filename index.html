@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選挙速報風 画面ジェネレーター</title>
+    <!-- Google Fonts: Noto Sans JP, Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- サイドバーコントロールパネル -->
+        <aside id="sidebar">
+            <header class="sidebar-header">
+                <h1>選挙速報風ジェネレーター</h1>
+                <p class="subtitle">TV Election Bulletin Generator</p>
+            </header>
+
+            <!-- プリセットセレクター -->
+            <div class="preset-section">
+                <label for="preset-select" class="section-label">テンプレートを選択</label>
+                <select id="preset-select">
+                    <option value="preset-nhk">衆院選 2021 (NHK風)</option>
+                    <option value="preset-51shuin">衆院選 2024 (第51回史実)</option>
+                    <option value="preset-sangiin">参院選 2025 (ネオ未来風)</option>
+                    <option value="preset-game">ゲーム大会決勝 (e-Sports風)</option>
+                    <option value="preset-company">社内業績報告 (ビジネス風)</option>
+                </select>
+            </div>
+
+            <!-- コントロールタブ -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" data-tab="tab-news">テロップ・背景</button>
+                <button class="tab-btn" data-tab="tab-board">中央ボード</button>
+                <button class="tab-btn" data-tab="tab-seats">議席数</button>
+                <button class="tab-btn" data-tab="tab-candidate">当確速報</button>
+            </nav>
+
+            <div class="tab-content-container">
+                <!-- タブ1: テロップ・背景 -->
+                <div class="tab-content active" id="tab-news">
+                    <div class="control-group">
+                        <h3>上部テロップ</h3>
+                        <label for="input-ticker-title">メインタイトル (赤帯/白帯)</label>
+                        <input type="text" id="input-ticker-title" value="衆院選">
+                        
+                        <label for="input-ticker-line1">テロップ 1行目 (上段)</label>
+                        <input type="text" id="input-ticker-line1" value="自民・公明の過半数獲得が確実">
+                        
+                        <label for="input-ticker-line2">テロップ 2行目 (下段)</label>
+                        <input type="text" id="input-ticker-line2" value="自民 単独過半数はギリギリの情勢">
+                    </div>
+                    
+                    <div class="control-group">
+                        <h3>背景・演出</h3>
+                        <label for="select-bg-style">スタジオ背景スタイル</label>
+                        <select id="select-bg-style">
+                            <option value="bg-studio-dark">スタジオダークブルー (標準)</option>
+                            <option value="bg-studio-cyber">サイバーネオン (グリッド)</option>
+                            <option value="bg-studio-gold">ゴールデンラグジュアリー</option>
+                            <option value="bg-studio-election-red">激熱エマージェンシーレッド</option>
+                            <option value="bg-studio-glass-space">近未来ガラスモーフィズム</option>
+                            <option value="bg-studio-simple">シンプルグラデーション</option>
+                        </select>
+                        
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="check-ambient-anim" checked>
+                            <span class="checkmark"></span>
+                            背景のアンビエントアニメーションを有効にする
+                        </label>
+                        
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="check-scanline" checked>
+                            <span class="checkmark"></span>
+                            走査線/ノイズエフェクトを有効にする
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>サウンド設定</h3>
+                        <button id="btn-sound-test" class="secondary-btn">🔊 テロップチャイム再生 (Web Audio)</button>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="check-sound-effect" checked>
+                            <span class="checkmark"></span>
+                            当確表示時にチャイムを鳴らす
+                        </label>
+                    </div>
+                </div>
+
+                <!-- タブ2: 中央ボード -->
+                <div class="tab-content" id="tab-board">
+                    <div class="control-group">
+                        <h3>画面表示モード</h3>
+                        <label for="select-board-mode">中央メイン画面の表示</label>
+                        <select id="select-board-mode">
+                            <option value="mode-news">主要ニュース (2段カード)</option>
+                            <option value="mode-proportional">比例代表 議席速報</option>
+                            <option value="mode-featured">注目選挙区 激戦バトル</option>
+                            <option value="mode-share">政党別議席シェア (円グラフ)</option>
+                        </select>
+                    </div>
+
+                    <!-- 主要ニュース設定フォーム -->
+                    <div id="settings-mode-news">
+                        <div class="control-group">
+                            <h3>上段カード</h3>
+                            <label for="input-card1-party">政党・グループ名</label>
+                            <input type="text" id="input-card1-party" value="立民">
+                            
+                            <label for="input-card1-desc">速報見出し</label>
+                            <input type="text" id="input-card1-desc" value="議席増の勢い">
+                            
+                            <label for="select-card1-color">政党カラーテーマ</label>
+                            <select id="select-card1-color">
+                                <option value="party-ritumin">立民ブルー (青)</option>
+                                <option value="party-jimin">自民レッド (赤)</option>
+                                <option value="party-komei">公明ピンク (ピンク)</option>
+                                <option value="party-ishin">維新グリーン (緑)</option>
+                                <option value="party-kyosan">共産パープル (紫)</option>
+                            </select>
+
+                            <div class="candidate-avatar-edit">
+                                <label for="select-avatar1-type">候補者アバター</label>
+                                <select id="select-avatar1-type">
+                                    <option value="man-old">男性 (ベテラン)</option>
+                                    <option value="man-young">男性 (若手)</option>
+                                    <option value="woman-middle">女性 (中堅)</option>
+                                    <option value="woman-young">女性 (若手)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <h3>下段カード</h3>
+                            <label for="input-card2-party">政党・グループ名</label>
+                            <input type="text" id="input-card2-party" value="維新">
+                            
+                            <label for="input-card2-desc">速報見出し</label>
+                            <input type="text" id="input-card2-desc" value="3倍以上見通し">
+                            
+                            <label for="select-card2-color">政党カラーテーマ</label>
+                            <select id="select-card2-color">
+                                <option value="party-ishin">維新ゴールド/グリーン (黄・緑)</option>
+                                <option value="party-jimin">自民レッド (赤)</option>
+                                <option value="party-ritumin">立民ブルー (青)</option>
+                                <option value="party-komei">公明ピンク (ピンク)</option>
+                                <option value="party-kyosan">共産パープル (紫)</option>
+                            </select>
+
+                            <div class="candidate-avatar-edit">
+                                <label for="select-avatar2-type">候補者アバター</label>
+                                <select id="select-avatar2-type">
+                                    <option value="man-middle">男性 (中堅・メガネ)</option>
+                                    <option value="man-old">男性 (ベテラン)</option>
+                                    <option value="woman-middle">女性 (中堅)</option>
+                                    <option value="woman-young">女性 (若手)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 注目選挙区設定フォーム -->
+                    <div id="settings-mode-featured" style="display: none;">
+                        <div class="control-group">
+                            <h3>注目選挙区・激戦バトル設定</h3>
+                            <label for="input-feat-district">選挙区名</label>
+                            <input type="text" id="input-feat-district" value="東京1区">
+                            
+                            <label for="input-feat-status">状況ステータス</label>
+                            <input type="text" id="input-feat-status" value="接戦激突！">
+
+                            <hr style="margin: 14px 0; border: none; border-top: 1px solid var(--sidebar-border);">
+                            
+                            <h4 style="font-size: 0.8rem; color: #fff; margin-bottom: 6px;">候補者1 (左側)</h4>
+                            <label for="input-feat-party-1">所属政党 (略称)</label>
+                            <input type="text" id="input-feat-party-1" value="自民">
+                            <label for="input-feat-name-1">候補者氏名</label>
+                            <input type="text" id="input-feat-name-1" value="山田 太郎">
+                            <label for="input-feat-votes-1">得票数</label>
+                            <input type="number" id="input-feat-votes-1" value="85200">
+                            <label for="select-feat-avatar-1">アバター</label>
+                            <select id="select-feat-avatar-1">
+                                <option value="man-old">男性 (ベテラン)</option>
+                                <option value="man-young" selected>男性 (若手)</option>
+                                <option value="woman-middle">女性 (中堅)</option>
+                                <option value="woman-young">女性 (若手)</option>
+                            </select>
+
+                            <hr style="margin: 14px 0; border: none; border-top: 1px solid var(--sidebar-border);">
+
+                            <h4 style="font-size: 0.8rem; color: #fff; margin-bottom: 6px;">候補者2 (右側)</h4>
+                            <label for="input-feat-party-2">所属政党 (略称)</label>
+                            <input type="text" id="input-feat-party-2" value="立民">
+                            <label for="input-feat-name-2">候補者氏名</label>
+                            <input type="text" id="input-feat-name-2" value="佐藤 花子">
+                            <label for="input-feat-votes-2">得票数</label>
+                            <input type="number" id="input-feat-votes-2" value="78900">
+                            <label for="select-feat-avatar-2">アバター</label>
+                            <select id="select-feat-avatar-2">
+                                <option value="woman-young" selected>女性 (若手)</option>
+                                <option value="woman-middle">女性 (中堅)</option>
+                                <option value="man-middle">男性 (中堅・メガネ)</option>
+                                <option value="man-young">男性 (若手)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タブ3: 議席数 -->
+                <div class="tab-content" id="tab-seats">
+                    <div class="control-group">
+                        <h3>議席速報カウンター</h3>
+                        <p class="help-text">政党ごとの議席数をリアルタイム編集できます。総議席数(465)から自動で「残議席」が算出されます。</p>
+                        
+                        <div class="seats-editor-list" id="seats-editor-container">
+                            <!-- JSで生成 -->
+                        </div>
+                        
+                        <div class="seat-total-summary">
+                            <span>合計獲得: <strong id="editor-total-acquired">27</strong> / 465</span>
+                            <span>残議席: <strong id="editor-total-remaining">438</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- タブ4: 当確速報 -->
+                <div class="tab-content" id="tab-candidate">
+                    <div class="control-group">
+                        <h3>当確表示トグル</h3>
+                        <label class="switch-container">
+                            <input type="checkbox" id="check-candidate-show" checked>
+                            <span class="switch-slider"></span>
+                            当確表示を画面に出す
+                        </label>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>候補者情報</h3>
+                        
+                        <label for="input-cand-name">候補者氏名</label>
+                        <input type="text" id="input-cand-name" value="小泉 進次郎">
+                        
+                        <label for="input-cand-age">年齢</label>
+                        <input type="number" id="input-cand-age" value="40">
+                        
+                        <label for="input-cand-party">所属政党</label>
+                        <input type="text" id="input-cand-party" value="自">
+                        
+                        <label for="select-cand-status">現新区分</label>
+                        <select id="select-cand-status">
+                            <option value="前">前職 (前)</option>
+                            <option value="元">元職 (元)</option>
+                            <option value="新">新人 (新)</option>
+                        </select>
+                        
+                        <label for="input-cand-wins">当選回数</label>
+                        <input type="text" id="input-cand-wins" value="5回目">
+                        
+                        <label for="input-cand-district">選挙区</label>
+                        <input type="text" id="input-cand-district" value="神奈川11区">
+                        
+                        <label for="input-cand-title">肩書き・略歴</label>
+                        <input type="text" id="input-cand-title" value="元環境大臣">
+                        
+                        <label for="select-cand-badge">当確マーク</label>
+                        <select id="select-cand-badge">
+                            <option value="確">確 (赤丸・当確決定)</option>
+                            <option value="当">当 (当確)</option>
+                            <option value="内定">内定 (ほぼ確実)</option>
+                        </select>
+
+                        <div class="candidate-avatar-edit">
+                            <label for="select-caster-avatar">キャスターアバター (右下)</label>
+                            <select id="select-caster-avatar">
+                                <option value="caster-man">男性キャスター</option>
+                                <option value="caster-woman">女性キャスター</option>
+                                <option value="none">非表示</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 仮想選挙シミュレーションパネル ===== -->
+            <section id="sim-panel">
+                <div id="sim-panel-header">
+                    <div class="sim-live-dot" id="sim-live-indicator"></div>
+                    <span class="sim-panel-title">🎬 仮想選挙シミュレーション</span>
+                    <span id="sim-status-text">⏹️ 待機中</span>
+                </div>
+
+                <div class="sim-scenario-row">
+                    <label class="section-label" for="sim-scenario-select">選挙シナリオを選択</label>
+                    <select id="sim-scenario-select">
+                        <option value="sim-standard">衆院選 2021風 (自民大勝)</option>
+                        <option value="sim-51shuin">第51回衆院選 (2024年史実結果)</option>
+                        <option value="sim-surprise">野党大逆転！サプライズ選挙</option>
+                        <option value="sim-sangiin">参院選 2025風 (大混戦)</option>
+                        <option value="sim-close">超接戦！連立政権か政界再編か</option>
+                    </select>
+                </div>
+
+                <div class="sim-speed-row">
+                    <label for="sim-speed-slider">速度</label>
+                    <input type="range" id="sim-speed-slider" min="0" max="7" step="1" value="3">
+                    <span class="sim-speed-label" id="sim-speed-label">少し速い</span>
+                </div>
+
+                <div class="sim-btn-row">
+                    <button id="sim-start-btn" class="sim-start-btn-el">▶️ シミュレーション開始</button>
+                    <button id="sim-reset-btn" class="sim-reset-btn-el">↺ リセット</button>
+                </div>
+
+                <div class="sim-progress-container">
+                    <div class="sim-progress-label">
+                        <span>開票進捗</span>
+                        <span id="sim-progress-text">0 / 0 議席確定</span>
+                    </div>
+                    <div class="sim-progress-bar">
+                        <div class="sim-progress-bar-fill" id="sim-progress-bar-fill"></div>
+                    </div>
+                </div>
+
+                <div id="sim-majority-line">
+                    <span class="majority-info" id="sim-majority-text">過半数ライン: 233議席</span>
+                </div>
+            </section>
+
+            <!-- アクションボタン -->
+            <footer class="sidebar-footer">
+                <button id="btn-toggle-fullscreen" class="primary-btn">📺 全画面放送モード (F11対応)</button>
+                <p class="hint">全画面時は「Esc」キーまたは右上のボタンで戻れます。</p>
+            </footer>
+        </aside>
+
+        <!-- メインプレビュー画面 -->
+        <main id="preview-area">
+            <div id="tv-monitor-wrapper">
+                <!-- 16:9比率を保つためのコンテナ -->
+                <div id="tv-monitor">
+                    <!-- 背景レイヤー -->
+                    <div id="tv-background" class="bg-studio-dark">
+                        <!-- グリッド背景用 -->
+                        <div class="bg-grid-overlay"></div>
+                        <!-- パーティクル/ライト効果用 -->
+                        <div class="bg-ambient-light"></div>
+                    </div>
+
+                    <!-- 走査線/ノイズオーバレイ -->
+                    <div id="tv-scanlines" class="scanline-overlay"></div>
+
+                    <!-- TV放送画面コンテンツ -->
+                    <div id="tv-screen-content">
+                        <!-- 1. 上部スクロールテロップ -->
+                        <div id="tv-header-ticker">
+                            <div class="ticker-badge">
+                                <span id="tv-ticker-title">衆院選</span>
+                                <span class="badge-year" id="tv-badge-year">2021</span>
+                            </div>
+                            <div class="ticker-text-area">
+                                <div class="ticker-scroller">
+                                    <div class="ticker-line-1" id="tv-ticker-line1">自民・公明の過半数獲得が確実</div>
+                                    <div class="ticker-line-2" id="tv-ticker-line2">自民 単独過半数はギリギリの情勢</div>
+                                </div>
+                            </div>
+                            <!-- 右端: 時刻表示 -->
+                            <div class="tv-clock-box">
+                                <div class="tv-clock-time" id="tv-clock-time">00:00:00</div>
+                                <div class="tv-clock-date" id="tv-clock-date">2026.06.14</div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 中央のグラフィックエリア -->
+                        <div id="tv-center-area">
+                            <!-- A. 主要ニュースボード (従来の tv-main-board) -->
+                            <div id="tv-main-board" class="center-board-panel active">
+                                <!-- 上段カード -->
+                                <div class="board-card party-ritumin" id="tv-board-card1">
+                                    <div class="card-party-tag">
+                                        <span class="party-name" id="tv-card1-party">立民</span>
+                                    </div>
+                                    <div class="card-message">
+                                        <h2 id="tv-card1-desc">議席増の勢い</h2>
+                                    </div>
+                                    <div class="card-avatar-wrapper">
+                                        <div class="avatar-container" id="tv-avatar1">
+                                            <!-- SVGアバターがここに挿入されます -->
+                                        </div>
+                                    </div>
+                                    <div class="card-glow-line"></div>
+                                </div>
+
+                                <!-- 下段カード -->
+                                <div class="board-card party-ishin" id="tv-board-card2">
+                                    <div class="card-party-tag">
+                                        <span class="party-name" id="tv-card2-party">維新</span>
+                                    </div>
+                                    <div class="card-message">
+                                        <h2 id="tv-card2-desc">3倍以上見通し</h2>
+                                    </div>
+                                    <div class="card-avatar-wrapper">
+                                        <div class="avatar-container" id="tv-avatar2">
+                                            <!-- SVGアバターがここに挿入されます -->
+                                        </div>
+                                    </div>
+                                    <div class="card-glow-line"></div>
+                                </div>
+                            </div>
+
+                            <!-- B. 比例代表ボード -->
+                            <div id="tv-proportional-board" class="center-board-panel">
+                                <div class="board-title">
+                                    <span class="title-jp">比例代表 議席予測・速報</span>
+                                    <span class="title-en">PROPORTIONAL REPRESENTATION SUMMARY</span>
+                                </div>
+                                <div class="proportional-container" id="tv-prop-list">
+                                    <!-- JSで動的に各政党の比例割合・獲得議席をグラフ付きで描画 -->
+                                </div>
+                            </div>
+
+                            <!-- C. 注目選挙区ボード -->
+                            <div id="tv-featured-district-board" class="center-board-panel">
+                                <div class="board-title">
+                                    <span class="title-jp">注目選挙区・激戦バトル</span>
+                                    <span class="title-en">FEATURED DISTRICT BATTLE</span>
+                                </div>
+                                <div class="featured-district-content">
+                                    <div class="district-header">
+                                        <div class="district-badge" id="tv-feat-district-name">東京1区</div>
+                                        <div class="district-status blink" id="tv-feat-district-status">接戦激突！</div>
+                                    </div>
+                                    
+                                    <div class="battle-arena">
+                                        <!-- 候補者1 (左) -->
+                                        <div class="candidate-vs-card vs-left">
+                                            <div class="vs-avatar" id="tv-feat-avatar-1"></div>
+                                            <div class="vs-meta">
+                                                <span class="vs-party-badge party-bg-jimin" id="tv-feat-party-1">自民</span>
+                                                <span class="vs-name" id="tv-feat-name-1">山田 太郎</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- VS文字と比率ゲージ -->
+                                        <div class="vs-gauge-box">
+                                            <div class="vs-mid-text">VS</div>
+                                            <div class="vs-bar-wrap">
+                                                <div class="vs-bar-fill-l" id="tv-feat-gauge-fill" style="width: 52%;"></div>
+                                            </div>
+                                            <div class="vs-bar-labels">
+                                                <span id="tv-feat-pct-1">52%</span>
+                                                <span id="tv-feat-pct-2">48%</span>
+                                            </div>
+                                            <div class="vs-votes-row">
+                                                <span id="tv-feat-votes-1">85,200 票</span>
+                                                <span id="tv-feat-votes-2">78,900 票</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- 候補者2 (右) -->
+                                        <div class="candidate-vs-card vs-right">
+                                            <div class="vs-avatar" id="tv-feat-avatar-2"></div>
+                                            <div class="vs-meta">
+                                                <span class="vs-party-badge party-bg-ritumin" id="tv-feat-party-2">立民</span>
+                                                <span class="vs-name" id="tv-feat-name-2">佐藤 花子</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- D. 議席シェア円グラフボード -->
+                            <div id="tv-share-board" class="center-board-panel">
+                                <div class="board-title">
+                                    <span class="title-jp">政党別議席獲得シェア</span>
+                                    <span class="title-en">SEATS DISTRIBUTION SHARE</span>
+                                </div>
+                                <div class="share-board-content">
+                                    <div class="donut-chart-wrapper">
+                                        <svg id="tv-donut-chart" viewBox="0 0 200 200">
+                                            <!-- 背景のサークル（グレーの円輪） -->
+                                            <circle cx="100" cy="100" r="70" fill="transparent" stroke="rgba(255,255,255,0.06)" stroke-width="20"></circle>
+                                            <g id="donut-segments">
+                                                <!-- JSで動的にセグメントを生成 -->
+                                            </g>
+                                            <g class="donut-center-text">
+                                                <text x="100" y="85" text-anchor="middle" class="donut-center-title">獲得議席</text>
+                                                <text x="100" y="118" text-anchor="middle" class="donut-center-number" id="donut-center-acquired">0</text>
+                                                <text x="100" y="142" text-anchor="middle" class="donut-center-total" id="donut-center-total">/ 465</text>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                    <div class="share-legend" id="tv-share-legend">
+                                        <!-- JSで動的に凡例を生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. 下部情報バー -->
+                        <div id="tv-bottom-bar">
+                            <!-- 個人当確速報エリア (議席テープの上に浮かぶ) -->
+                            <div id="tv-candidate-bulletin" class="show">
+                                <div class="bulletin-badge-container">
+                                    <div class="bulletin-badge" id="tv-cand-badge">確</div>
+                                    <span class="bulletin-wins" id="tv-cand-wins">5回目</span>
+                                </div>
+                                <div class="bulletin-main-info">
+                                    <div class="candidate-meta">
+                                        <span class="district" id="tv-cand-district">神奈川11区</span>
+                                        <span class="title" id="tv-cand-title">元環境大臣</span>
+                                    </div>
+                                    <div class="candidate-identity">
+                                        <span class="name" id="tv-cand-name">小泉 進次郎</span>
+                                        <span class="age-party">
+                                            (<span id="tv-cand-age">40</span>)
+                                            <span class="party-label" id="tv-cand-party-label">自・前</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 議席バーグラフ (比例的な幅で表示) -->
+                            <div id="tv-seat-bar-graph">
+                                <div id="tv-seat-bar-track">
+                                    <!-- JSで動的に生成 -->
+                                </div>
+                                <div id="tv-seat-bar-majority-line"></div>
+                            </div>
+
+                            <!-- 獲得議席テープ (常に全幅) -->
+                            <div id="tv-seats-tally">
+                                <div class="seats-header">
+                                    <span>獲得議席</span>
+                                </div>
+                                <div class="seats-scroll-container">
+                                    <div class="seats-track" id="tv-seats-track">
+                                        <!-- JSで政党データを流し込む -->
+                                    </div>
+                                </div>
+                                <!-- キャスター/プレゼンター (右端) -->
+                                <div id="tv-caster-box">
+                                    <div class="caster-avatar-container" id="tv-caster-avatar-slot">
+                                        <!-- キャスターのSVGアバター -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 開票確定特別オーバーレイ -->
+                    <div id="tv-complete-overlay" class="complete-overlay">
+                        <div class="complete-banner">
+                            <div class="complete-shine"></div>
+                            <div class="complete-badge">確定</div>
+                            <h2 class="complete-title" id="tv-complete-title">開票終了</h2>
+                            <p class="complete-subtitle" id="tv-complete-summary">各地のすべての議席が確定しました</p>
+                        </div>
+                    </div>
+
+                    <!-- 全画面解除用のフローティングボタン (全画面モード時のみ表示) -->
+                    <button id="btn-exit-fullscreen" class="floating-exit-btn" title="全画面表示を終了">✕ 終了</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript の読み込み -->
+    <script src="app.js"></script>
+</body>
+</html>
